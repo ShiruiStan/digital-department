@@ -1,0 +1,27 @@
+server:
+  port: 8090
+
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.100.132:3306/digital_department?serverTimezone=Asia/Shanghai
+    username: atcdi
+    password: atcdi
+
+logging:
+#  file:
+#    path: src\main\resources\logger\ # logger文件夹需要提前生成
+  level:
+    com.atcdi: debug
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+#  type-handlers-package: com.atcdi
