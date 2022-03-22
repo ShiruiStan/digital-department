@@ -1,8 +1,6 @@
-package com.atcdi.digital.hanlder;
+package com.atcdi.digital.handler.security;
 
 import com.atcdi.digital.entity.StandardException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

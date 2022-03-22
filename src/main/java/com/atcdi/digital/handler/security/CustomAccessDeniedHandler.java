@@ -1,4 +1,4 @@
-package com.atcdi.digital.hanlder;
+package com.atcdi.digital.handler.security;
 
 import com.atcdi.digital.entity.StandardException;
 import org.springframework.security.access.AccessDeniedException;

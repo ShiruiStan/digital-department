@@ -1,9 +1,7 @@
-package com.atcdi.digital.utils;
+package com.atcdi.digital.handler.security;
 
 import com.atcdi.digital.entity.User;
 import com.atcdi.digital.service.UserService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,13 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
 
 
 @Component
-@Slf4j
-
-public class AuthenticationUtil implements AuthenticationProvider {
+public class AuthenticationHandler implements AuthenticationProvider {
     @Resource
     UserService userService;
 

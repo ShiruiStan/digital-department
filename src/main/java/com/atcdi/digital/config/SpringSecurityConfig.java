@@ -1,28 +1,34 @@
 package com.atcdi.digital.config;
 
-import com.atcdi.digital.hanlder.*;
+import com.atcdi.digital.handler.PermissionHandler;
+import com.atcdi.digital.handler.security.*;
 import com.atcdi.digital.service.UserService;
-import com.atcdi.digital.utils.AuthenticationUtil;
+import com.atcdi.digital.handler.security.AuthenticationHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.DefaultLoginPageConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.annotation.Resource;
 
 @EnableWebSecurity
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled=true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     UserService userService;
     @Resource
-    AuthenticationUtil authTool;
+    AuthenticationHandler authTool;
     @Resource
     CustomAuthenticationEntryPoint authenticationEntryPoint;
     @Resource
@@ -58,26 +64,28 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .httpBasic()
+
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
 
-
                 .and()
-                .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
-
-
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
+                .addFilterBefore(new PermissionHandler(), FilterSecurityInterceptor.class)
                 .formLogin()
-                .loginPage("/login")
+//                .loginPage("/login")
+                .loginProcessingUrl("/login")
                 .successHandler(successHandler)
                 .failureHandler(failureHandler)
                 .permitAll()
 
 //                .and()
 //                .rememberMe()
-
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(deniedHandler)
@@ -86,7 +94,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessHandler(logoutHandler)
                 .permitAll();
-
 
     }
 
