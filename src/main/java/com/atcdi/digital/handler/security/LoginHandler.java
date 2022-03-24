@@ -15,23 +15,25 @@ import javax.annotation.Resource;
 
 
 @Component
-public class AuthenticationHandler implements AuthenticationProvider {
+public class LoginHandler implements AuthenticationProvider {
     @Resource
     UserService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
         String userName = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
-
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         UserDetails user = userService.loadUserByUsername(userName);
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("");
         }
         userService.userLogin((User)user);
+
         return new UsernamePasswordAuthenticationToken(userName, password, user.getAuthorities());
     }
+
 
     @Override
     public boolean supports(Class<?> authentication) {

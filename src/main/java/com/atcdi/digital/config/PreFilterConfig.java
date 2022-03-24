@@ -2,6 +2,9 @@ package com.atcdi.digital.config;
 
 
 import org.springframework.core.annotation.Order;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -24,15 +27,9 @@ public class PreFilterConfig implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws RuntimeException {
         HttpServletRequest req = (HttpServletRequest) request;
-        System.out.println(req.getMethod() + " " + req.getRequestURI());
-        if (req.getCookies() != null) {
-            for (Cookie c : req.getCookies()) {
-                System.out.println("      " + c.getName() + " " + c.getValue() + " " + c.getDomain());
-            }
-        }
-
         HttpServletResponse res = (HttpServletResponse) response;
-        res.setHeader("x-frame-options", "SAMEORIGIN");
+        System.out.println(req.getMethod() + " " + req.getRequestURI());
+
         String origin = req.getHeader("Origin");
         if (origin != null) res.setHeader("Access-Control-Allow-Origin", origin);
 //        String header = req.getHeader("Access-Control-Request-Headers");

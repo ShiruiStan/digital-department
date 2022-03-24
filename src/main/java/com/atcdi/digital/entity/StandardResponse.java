@@ -26,14 +26,15 @@ public class StandardResponse {
         return res;
     }
 
-    public static  StandardResponse success(JsonNode json){
+    public static  StandardResponse success(String msg, Object data){
         StandardResponse res = new StandardResponse();
         res.success = true;
-        res.message = "请求成功";
-        res.result = json;
+        res.message = msg;
+        res.result = data;
         res.code = 200;
         return res;
     }
+
 
     public static  StandardResponse success(Object data){
         StandardResponse res = new StandardResponse();

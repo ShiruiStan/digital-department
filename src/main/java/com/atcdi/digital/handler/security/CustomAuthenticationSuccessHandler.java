@@ -23,11 +23,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
-        String cookieSetter = httpServletResponse.getHeader("set-cookie");
-        String origin = httpServletRequest.getHeader("Origin");
-        if (!origin.equals(httpServletRequest.getHeader("Host"))){
-            httpServletResponse.setHeader("set-cookie", cookieSetter + "; SameSite=None; Secure");
-        }
-        httpServletResponse.getWriter().write(mapper.writeValueAsString(StandardResponse.success("登录成功")));
+        String session = httpServletRequest.getSession().getId();
+        ObjectNode res = mapper.createObjectNode();
+        res.put("token", session);
+        httpServletResponse.getWriter().write(mapper.writeValueAsString(StandardResponse.success("登录成功", res)));
     }
 }
