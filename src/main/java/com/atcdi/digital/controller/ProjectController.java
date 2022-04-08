@@ -16,8 +16,6 @@ import javax.annotation.Resource;
 public class ProjectController {
     @Resource
     ProjectService projectService;
-    @Resource
-    ObjectMapper mapper;
 
     @GetMapping("/all")
     public StandardResponse getProjectsList(){
@@ -25,17 +23,29 @@ public class ProjectController {
     }
 
     @GetMapping("/byuser/all")
+    @Deprecated
     public StandardResponse getUserAllProjects(){
         return StandardResponse.success(projectService.getUserProjects(true));
     }
 
     @GetMapping("/byuser/ongoing")
+    @Deprecated
     public StandardResponse getUserOngoingProjects(){
         return StandardResponse.success(projectService.getUserProjects(false));
     }
 
+    @GetMapping("/user")
+    public StandardResponse getUserProjects(){
+        return StandardResponse.success(projectService.getUserProjects(true));
+    }
+
     @GetMapping("/info")
-    public StandardResponse getUserOngoingProjects(@NonNull int id){
+    public StandardResponse getProjectById(@NonNull int id){
         return StandardResponse.success(projectService.getProjectById(id));
+    }
+
+    @GetMapping("/name")
+    public StandardResponse getUserAllProjectNames(){
+        return StandardResponse.success(projectService.getAllProjectNameList());
     }
 }

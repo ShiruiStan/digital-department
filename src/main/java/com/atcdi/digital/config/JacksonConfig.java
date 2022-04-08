@@ -13,6 +13,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,6 +28,7 @@ public class JacksonConfig {
     @Bean
     public ObjectMapper objectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
+
 
         mapper.enable(MapperFeature.USE_STD_BEAN_NAMING);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -50,6 +52,7 @@ public class JacksonConfig {
         javaTimeModule.addDeserializer(
                 LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
+        mapper.findAndRegisterModules();
         mapper.registerModule(javaTimeModule);
         mapper.registerModule(new Jdk8Module());
         return mapper;

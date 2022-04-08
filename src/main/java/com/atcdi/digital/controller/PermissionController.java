@@ -17,11 +17,9 @@ import javax.annotation.Resource;
 public class PermissionController {
     @Resource
     PermissionService permissionService;
-    @Resource
-    ObjectMapper mapper;
 
-    @GetMapping("/permissions")
-    public StandardResponse getRolePermissionMap(){
-        return StandardResponse.success(permissionService.getRolePermissionMap());
+    @GetMapping("/directory")
+    public StandardResponse getPermissionDirectory(){
+        return StandardResponse.success(permissionService.getPermissionDirectory());
     }
 }

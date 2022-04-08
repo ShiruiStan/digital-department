@@ -40,10 +40,13 @@ public interface UserDao {
 
     @Deprecated
     @Update("UPDATE users SET enabled = #{enabled} WHERE user_id = #{userId}")
-    boolean changeUserAccountEnable(int userId, int enabled);
+    boolean changeUserAccountEnable(int userId, boolean enabled);
 
     @Select("SELECT nickname FROM users WHERE user_id = #{userId}")
     String getUserNickNameById(int userId);
+
+    @Select("SELECT * FROM users WHERE enabled=1")
+    Set<User> getAllUsers();
 
 
 }

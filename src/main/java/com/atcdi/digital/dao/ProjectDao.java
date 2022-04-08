@@ -1,10 +1,10 @@
 package com.atcdi.digital.dao;
 
+import com.atcdi.digital.entity.daliy.WorkItem;
 import com.atcdi.digital.entity.project.Project;
 import com.atcdi.digital.entity.project.ProjectAssist;
 import com.atcdi.digital.entity.project.ProjectMember;
 import org.apache.ibatis.annotations.*;
-import org.springframework.security.core.parameters.P;
 
 import java.util.Set;
 
@@ -19,15 +19,20 @@ public interface ProjectDao {
     })
     Project getProjectById(int projectId);
 
+
+
     @Select("SELECT * FROM user_project WHERE project_id = #{projectId}")
     Set<ProjectMember> getProjectMembers(int projectId);
 
     @Select("SELECT * FROM external_assists WHERE project_id = #{projectId}")
     Set<ProjectAssist> getProjectAssists(int projectId);
 
-    @Select("SELECT * FROM projects")
+    @Select("SELECT * FROM projects WHERE project_status NOT IN ('LAUNCH', 'VIRTUAL')")
     @ResultMap("projectMap")
     Set<Project> getAllProjects();
+
+    @Select("SELECT project_id, project_name, project_status, project_class FROM projects WHERE project_status != 'LAUNCH'")
+    Set<Project> getProjectNameList();
 
     @Deprecated
     @Update(value = "UPDATE projects set project_types = #{projectTypes} WHERE project_id = #{projectId}")
@@ -42,6 +47,11 @@ public interface ProjectDao {
     @ResultMap("projectMap")
     Set<Project> getUserOngoingProjects(int userId);
 
+    @Select("SELECT project_name FROM projects WHERE project_id=#{projectId}")
+    String getProjectNameById(int projectId);
+
+    @Select("SELECT item_name, item_class FROM work_items")
+    Set<WorkItem> getWorkItems();
 
 
 }

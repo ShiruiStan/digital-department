@@ -15,27 +15,28 @@ import java.util.*;
 public class User implements UserDetails {
 
 
-    private int userId;
-    private String username;
+    int userId;
+    String username;
     @JsonIgnore
-    private String password;
-    private String nickname;
-    private String phone;
+    String password;
+    String nickname;
+    String phone;
     @ApiModelProperty("账号角色： 均以ROLE_开头，后期做权限控制时使用")
-    private Set<Role> roles = new HashSet<>();
+    Set<Role> roles = new HashSet<>();
     @JsonIgnore
-    private int enabled;
+    boolean enabled;
     @ApiModelProperty("人员组别： 所长,生产组,研发组,市场组,综合组")
-    private DepartmentGroup group;
+    DepartmentGroup group;
     @JsonIgnore
-    private boolean credentialsNonExpired;
+    boolean credentialsNonExpired;
     @JsonIgnore
-    private boolean accountNonExpired;
+    boolean accountNonExpired;
     @JsonIgnore
-    private boolean accountNonLocked;
+    boolean accountNonLocked;
 
 
     public enum DepartmentGroup{
+        ADMIN, // 管理员
         LEADER, // 所长
         PRODUCE, // 生产组
         DEVELOPMENT, // 研发组
@@ -55,39 +56,5 @@ public class User implements UserDetails {
         }
         return authorities;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(username, user.username);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(username);
-    }
-
-    @Override
-    public boolean isEnabled(){
-        return enabled != 0;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return enabled != 0;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return enabled != 0;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return enabled != 0;
-    }
-
 
 }

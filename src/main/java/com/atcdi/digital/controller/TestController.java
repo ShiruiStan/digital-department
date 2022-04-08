@@ -9,10 +9,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 
 
 @RestController
@@ -26,6 +28,12 @@ public class TestController {
     @GetMapping("/hello")
     @ApiOperation("测试接口")
     public StandardResponse hello() {
+        return StandardResponse.success("测试成功");
+    }
+
+    @GetMapping("/date")
+    public StandardResponse date(LocalDate d) {
+        System.out.println(d);
         return StandardResponse.success("测试成功");
     }
 
@@ -47,4 +55,6 @@ public class TestController {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode("123456");
     }
+
+
 }

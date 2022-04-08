@@ -27,21 +27,14 @@ public class SessionHandler {
 
     public void registryUser(User user){
         session.setAttribute("user", user);
-        Set<String> roles = user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toSet());
-        session.setAttribute("roles", roles);
     }
 
     public void freeUser(){
         session.removeAttribute("user");
-        session.removeAttribute("roles");
     }
 
     public User getCurrentUser(){
         return (User) session.getAttribute("user");
-    }
-
-    public Set<String> getCurrentRoles(){
-        return (Set<String>) session.getAttribute("roles");
     }
 
 

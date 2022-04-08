@@ -1,11 +1,10 @@
 package com.atcdi.digital.entity.project;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -13,54 +12,57 @@ import java.util.Set;
 
 @Data
 public class Project {
-    private int projectId;
+    int projectId;
     @ApiModelProperty("项目名称")
-    private String projectName;
-    @ApiModelProperty("项目状态：发起, 确认, 进行中, 完成")
-    private ProjectStatus projectStatus;
+    String projectName;
+    @ApiModelProperty("项目状态：虚拟，发起, 进行中, 完成")
+    ProjectStatus projectStatus;
     @ApiModelProperty("委托单位")
-    private String client;
+    String client;
     @ApiModelProperty("委托联系人+手机")
-    private String clientLinkman;
+    String clientLinkman;
     @ApiModelProperty("项目负责人用户id")
-    private int managerId; // 项目负责人
+    int managerId; // 项目负责人
     @ApiModelProperty("项目负责人")
-    private String managerName;
+    String managerName;
     @ApiModelProperty("产值类型：产值, 合同额")
-    private ValueType valueType;
+    ValueType valueType;
     @ApiModelProperty("产值")
-    private int value;
+    int value;
     @ApiModelProperty("项目说明")
-    private String description;
+    String description;
     @ApiModelProperty("有无实际项目：任务明确, 提前启动")
-    private ProjectProperty projectProperty;
+    ProjectProperty projectProperty;
     @ApiModelProperty("项目类别：生产项目, 科研项目")
-    private Set<ProjectClass> projectClass;
+    ProjectClass projectClass;
     @ApiModelProperty("项目来源：内部支撑, 外部项目")
-    private ProjectOrigin projectOrigin;
+    ProjectOrigin projectOrigin;
     @ApiModelProperty("设计阶段：设计, 施工, 养护")
-    private Set<ProjectStage> projectStage;
+    Set<ProjectStage> projectStage;
     @ApiModelProperty("项目类型：自主投标,辅助分院投标,基础数据生产,BIM应用综合服务,智慧工地,其他")
-    private Set<ProjectType> projectTypes;
+    Set<ProjectType> projectTypes;
     @ApiModelProperty("成果形式：效果图,渲染视频,模型文件,咨询报告,设计优化,硬件代采购及维护,硬件租赁及维护,软件平台,现场服务,PPT,其他")
-    private Set<AchievementForm> achievements;
+    Set<AchievementForm> achievements;
     @ApiModelProperty("计划开始时间")
-    private LocalDate planStartDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate planStartDate;
     @ApiModelProperty("计划结束时间")
-    private LocalDate planEndDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate planEndDate;
     @ApiModelProperty("重点技术要求")
-    private String keyTechnology;
+    String keyTechnology;
     @ApiModelProperty("项目成员")
     @JsonIgnore
-    private Set<ProjectMember> projectMembers;
+    Set<ProjectMember> projectMembers;
     @ApiModelProperty("外协单位")
-    private Set<ProjectAssist> projectAssists;
+    Set<ProjectAssist> projectAssists;
 
     public enum ProjectStatus{
         LAUNCH,
-        CONFIRM,
         ONGOING,
-        END,
+        FINISHED,
     }
 
     public enum ValueType{
@@ -112,18 +114,6 @@ public class Project {
         OTHER, // 其他
     }
 
-    public void setProjectClass(Set<?> res){
-        if (projectClass == null){
-            projectClass = new HashSet<>();
-        }
-        for(Object item : res){
-            if (item instanceof String){
-                projectClass.add(ProjectClass.valueOf((String) item));
-            }else if (item instanceof ProjectClass){
-                projectClass.add((ProjectClass) item);
-            }
-        }
-    }
 
     public void setProjectStage(Set<?> res){
         if (projectStage == null){
@@ -164,18 +154,8 @@ public class Project {
         }
     }
 
-    public JsonNode projectBriefInfo(){
-        ObjectNode briefInfo = new ObjectMapper().createObjectNode();
-        briefInfo.put("projectId" , projectId);
-        briefInfo.put("projectName" , projectName);
-        if (managerName != null) briefInfo.put("managerName" , managerName);
-        if (projectClass != null) briefInfo.put("projectClass" , projectClass.toString());
-        if (projectOrigin != null) briefInfo.put("projectOrigin" , projectOrigin.toString());
-        if (projectStage != null) briefInfo.put("projectStage" , projectStage.toString());
-        if (description != null) briefInfo.put("description" , description);
-        if (planStartDate != null) briefInfo.put("planStartDate" , planStartDate.toString());
-        if (planEndDate != null) briefInfo.put("planEndDate" , planEndDate.toString());
-        return briefInfo;
-    }
+
+
+
 
 }

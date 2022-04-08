@@ -1,5 +1,6 @@
 package com.atcdi.digital.handler.security;
 
+import com.atcdi.digital.entity.StandardException;
 import com.atcdi.digital.entity.User;
 import com.atcdi.digital.service.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,7 +28,7 @@ public class LoginHandler implements AuthenticationProvider {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         UserDetails user = userService.loadUserByUsername(userName);
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("");
+            throw new StandardException(401, "用户名或者密码错误，请重新输入!");
         }
         userService.userLogin((User)user);
 

@@ -32,13 +32,24 @@ public class PermissionService {
         }
         sessionHandler.setPermissionMap(permissionMap);
     }
-
     public Set<Menu> getMenuFromRole(Role role){
         return permissionDao.findMenusByRoleId(role.getRoleId());
     }
 
-    public Set<Role> getRolePermissionMap(){
-        return permissionDao.getRolePermissionMap();
+    public Set<Menu> getAllMenus(){
+        return permissionDao.getAllMenus();
+    }
+
+    public Set<Permission> getPermissionFromRole(Role role){
+        return permissionDao.findPermissionsByRoleId(role.getRoleId());
+    }
+
+    public Set<Permission> getAllPermissions(){
+        return permissionDao.getAllPermissions();
+    }
+
+    public Set<Menu> getPermissionDirectory(){
+        return permissionDao.getMenusWithPermission();
     }
 
 

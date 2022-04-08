@@ -35,7 +35,8 @@ public class PreFilterConfig implements Filter {
 //        String header = req.getHeader("Access-Control-Request-Headers");
         String header = "Accept, Origin, Content-Type, Authorization, Content-Length";
         res.setHeader("Access-Control-Allow-Headers", header);
-        res.setHeader("Access-Control-Allow-Methods", "*");
+        String methods = "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE";
+        res.setHeader("Access-Control-Allow-Methods", methods);
         res.setHeader("Access-Control-Max-Age", "3600");
         res.setHeader("Access-Control-Allow-Credentials", "true");
         try {

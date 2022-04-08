@@ -19,7 +19,7 @@ logging:
 #  file:
 #    path: src\main\resources\logger\ # logger文件夹需要提前生成
   level:
-    com.atcdi: debug
+    com.atcdi: info
 
 mybatis:
   configuration:

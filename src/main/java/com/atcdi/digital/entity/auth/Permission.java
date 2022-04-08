@@ -1,18 +1,20 @@
 package com.atcdi.digital.entity.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
+import org.springframework.http.HttpMethod;
 
 
 @Data
 public class Permission {
-    @JsonIgnore
-    private int permissionId;
-    @ApiModelProperty("权限名称，具体到接口级")
-    private String name;
-    @ApiModelProperty("权限对应的url")
-    private String url;
+    int permissionId;
+    @ApiModelProperty("权限code")
+    String code;
+    @ApiModelProperty("权限名称")
+    String name;
+    @ApiModelProperty("请求方法")
+    HttpMethod method = HttpMethod.GET;
+    @ApiModelProperty("请求url")
+    String url;
 
 }
