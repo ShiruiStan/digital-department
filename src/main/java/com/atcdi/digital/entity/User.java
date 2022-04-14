@@ -37,7 +37,7 @@ public class User implements UserDetails {
 
     public enum DepartmentGroup{
         ADMIN, // 管理员
-        LEADER, // 所长
+        MASTER, // 所长
         PRODUCE, // 生产组
         DEVELOPMENT, // 研发组
         MARKET, // 市场组
@@ -49,12 +49,13 @@ public class User implements UserDetails {
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 
         }
         return authorities;
     }
+
+
 
 }

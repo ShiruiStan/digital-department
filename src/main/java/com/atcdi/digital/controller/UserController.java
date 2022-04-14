@@ -34,7 +34,7 @@ public class UserController {
         return StandardResponse.error(500, "接口暂未实现");
     }
 
-    @GetMapping("/resetpassword")
+    @GetMapping("/reset_password")
     public StandardResponse resetPassword() {
         return userService.resetUserPassword() ? StandardResponse.success("重置成功，密码为123456") : StandardResponse.error(500, "密码重置失败");
     }
@@ -52,6 +52,11 @@ public class UserController {
     @GetMapping("/permissions")
     public StandardResponse getUserPermissions() {
         return StandardResponse.success(userService.getPermissions());
+    }
+
+    @GetMapping("/list")
+    public  StandardResponse getAllUsers(){
+        return StandardResponse.success(userService.getUserList());
     }
 
 

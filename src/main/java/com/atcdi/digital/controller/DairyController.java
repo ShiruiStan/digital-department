@@ -51,9 +51,9 @@ public class DairyController {
         }
     }
 
-    @GetMapping("/user_list")
-    public StandardResponse getUserList(){
-        return StandardResponse.success(dairyService.getUserList());
+    @GetMapping("/user_tree")
+    public StandardResponse getUserTree(){
+        return StandardResponse.success(dairyService.getUserTree());
     }
 
     @GetMapping("/by_user")

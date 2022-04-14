@@ -18,7 +18,7 @@ public class SessionHandler {
     HttpSession session;
 
     AntPathMatcher antPathMatcher = new AntPathMatcher();
-    HashMap<String, Set<String>> permissionMap = new HashMap<>();
+    public HashMap<String, Set<String>> permissionMap = new HashMap<>();
 
     public void setPermissionMap(HashMap<String, Set<String>> permissionMap){
         this.permissionMap = permissionMap;
@@ -27,6 +27,7 @@ public class SessionHandler {
 
     public void registryUser(User user){
         session.setAttribute("user", user);
+        session.setAttribute("roles", user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toSet()));
     }
 
     public void freeUser(){
@@ -36,7 +37,6 @@ public class SessionHandler {
     public User getCurrentUser(){
         return (User) session.getAttribute("user");
     }
-
 
 
     public boolean hasPermission(String url){
@@ -58,5 +58,15 @@ public class SessionHandler {
             }
         }
 
+    }
+
+    public boolean hasRole(String roleName){
+        Set<String> roles =  (Set<String>) session.getAttribute("roles");
+        return roles != null && roles.contains(roleName);
+    }
+
+
+    public boolean leaderOf(User other){
+        return getCurrentUser().getGroup().equals(other.getGroup()) && hasRole("ROLE_LEADER");
     }
 }

@@ -18,4 +18,5 @@ public class Role {
     @ApiModelProperty("角色拥有的权限")
     private Set<Permission> permissions;
 
+
 }

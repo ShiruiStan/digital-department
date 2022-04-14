@@ -4,6 +4,7 @@ import com.atcdi.digital.dao.DairyDao;
 import com.atcdi.digital.entity.StandardException;
 import com.atcdi.digital.entity.User;
 import com.atcdi.digital.entity.daliy.Dairy;
+import com.atcdi.digital.handler.SessionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -21,6 +22,8 @@ public class DairyService {
     UserService userService;
     @Resource
     ObjectMapper mapper;
+    @Resource
+    SessionHandler session;
 
     public List<JsonNode> getUserSelfDairyList() {
         return getUserDairyListByUser(userService.getCurrentUser());
@@ -53,13 +56,13 @@ public class DairyService {
     }
 
     public boolean updateDairy(Dairy dairy) {
-        if (!dairyDao.updateDairy(dairy)) {
+        if (!dairyDao.updateDairy(dairy) && !checkUser(dairy.getDairyId())) {
             throw new StandardException(500, "日志更新错误，日志ID：" + dairy.getDairyId());
         } else return true;
     }
 
     public boolean deleteDairy(int dairyId) {
-        if (!dairyDao.deleteDairy(dairyId)) {
+        if (!dairyDao.deleteDairy(dairyId) && !checkUser(dairyId)) {
             throw new StandardException(500, "日志删除错误，日志ID：" + dairyId);
         } else return true;
     }
@@ -71,7 +74,15 @@ public class DairyService {
         }else return true;
     }
 
-    public Set<JsonNode> getUserList(){
+    boolean checkUser(int checkId){
+        if (checkId != userService.getCurrentUser().getUserId() || session.hasRole("ROLE_ADMIN")){
+            throw new StandardException(403, "只允许操作本人日志");
+        }else{
+            return true;
+        }
+    }
+
+    public Set<JsonNode> getUserTree(){
         Set<User> userSet = userService.getUserList();
         Set<JsonNode> res = new HashSet<>();
         // TODO 权限控制filter

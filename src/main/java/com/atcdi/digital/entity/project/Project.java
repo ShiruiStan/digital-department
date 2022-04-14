@@ -1,7 +1,6 @@
 package com.atcdi.digital.entity.project;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -54,10 +53,11 @@ public class Project {
     @ApiModelProperty("重点技术要求")
     String keyTechnology;
     @ApiModelProperty("项目成员")
-    @JsonIgnore
     Set<ProjectMember> projectMembers;
     @ApiModelProperty("外协单位")
     Set<ProjectAssist> projectAssists;
+    @ApiModelProperty("项目周报")
+    Set<ProjectWeeklyReport> projectReports;
 
     public enum ProjectStatus{
         LAUNCH,

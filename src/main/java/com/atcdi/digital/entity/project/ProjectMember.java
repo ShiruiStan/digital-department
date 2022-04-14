@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class ProjectMember {
-    @JsonIgnore
     private int memberId;
     @JsonIgnore
     private int projectId;

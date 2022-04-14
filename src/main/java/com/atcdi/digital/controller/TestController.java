@@ -22,9 +22,6 @@ import java.time.LocalDate;
 @Api(tags  = "测试接口")
 public class TestController {
 
-    @Resource
-    ObjectMapper mapper;
-
     @GetMapping("/hello")
     @ApiOperation("测试接口")
     public StandardResponse hello() {
