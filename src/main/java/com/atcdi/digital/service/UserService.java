@@ -1,6 +1,7 @@
 package com.atcdi.digital.service;
 
 import com.atcdi.digital.dao.UserDao;
+import com.atcdi.digital.entity.StandardException;
 import com.atcdi.digital.entity.User;
 import com.atcdi.digital.entity.auth.Menu;
 import com.atcdi.digital.entity.auth.Permission;
@@ -141,9 +142,15 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public boolean resetUserPassword(){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return userDao.setUserPassword(sessionHandler.getCurrentUser().getUserId(), encoder.encode("123456"));
+
+
+    public void modifyUserPassword(String password){
+        if (password.matches("[a-zA-Z0-9]+")){
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            userDao.setUserPassword(sessionHandler.getCurrentUser().getUserId(), encoder.encode(password));
+        }else{
+            throw new StandardException(403, "密码重置失败，请重新输入！");
+        }
     }
 
 

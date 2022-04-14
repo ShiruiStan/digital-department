@@ -14,9 +14,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +57,7 @@ public class ProjectService {
     }
 
     public List<JsonNode> briefProjectList(Set<Project> projects) {
-        return projects.stream().map(this::projectBriefInfo).collect(Collectors.toList());
+        return projects.stream().filter(Objects::nonNull).map(this::projectBriefInfo).collect(Collectors.toList());
     }
 
     private JsonNode projectBriefInfo(Project project){
@@ -183,7 +181,6 @@ public class ProjectService {
     }
 
     public boolean canManageProject(Project project){
-        System.out.println(project.getManagerId() == sessionHandler.getCurrentUser().getUserId());
         if (sessionHandler.hasRole("ROLE_ADMIN")) return true;
         else if (sessionHandler.hasRole("ROLE_MASTER") && Project.ProjectStatus.LAUNCH.equals(project.getProjectStatus())) return true;
         else return project.getManagerId() == sessionHandler.getCurrentUser().getUserId() && !Project.ProjectStatus.FINISHED.equals(project.getProjectStatus());

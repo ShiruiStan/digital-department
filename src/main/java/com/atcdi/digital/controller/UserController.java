@@ -36,7 +36,14 @@ public class UserController {
 
     @GetMapping("/reset_password")
     public StandardResponse resetPassword() {
-        return userService.resetUserPassword() ? StandardResponse.success("重置成功，密码为123456") : StandardResponse.error(500, "密码重置失败");
+        userService.modifyUserPassword("123456");
+        return StandardResponse.success();
+    }
+
+    @PostMapping("/modify_password")
+    public StandardResponse modifyPassword(@NonNull String password) {
+        userService.modifyUserPassword(password);
+        return StandardResponse.success();
     }
 
     @GetMapping("/roles")
@@ -55,7 +62,7 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public  StandardResponse getAllUsers(){
+    public StandardResponse getAllUsers() {
         return StandardResponse.success(userService.getUserList());
     }
 
