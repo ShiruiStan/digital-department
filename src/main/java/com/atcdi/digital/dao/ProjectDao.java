@@ -7,6 +7,7 @@ import com.atcdi.digital.entity.project.ProjectMember;
 import com.atcdi.digital.entity.project.ProjectWeeklyReport;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Mapper
@@ -23,19 +24,19 @@ public interface ProjectDao {
 
 
     @Select("SELECT * FROM user_project WHERE project_id = #{projectId}")
-    Set<ProjectMember> getProjectMembers(int projectId);
+    List<ProjectMember> getProjectMembers(int projectId);
 
     @Delete("DELETE FROM user_project WHERE member_id = #{memberId} AND project_id = #{projectId}")
     boolean deleteProjectMember(int memberId, int projectId);
 
     @Select("SELECT * FROM external_assists WHERE project_id = #{projectId}")
-    Set<ProjectAssist> getProjectAssists(int projectId);
+    List<ProjectAssist> getProjectAssists(int projectId);
 
     @Delete("DELETE FROM external_assists WHERE assist_id = #{assistId} AND project_id = #{projectId}")
     boolean deleteProjectAssist(int assistId, int projectId);
 
-    @Select("SELECT * FROM project_reports WHERE project_id = #{projectId}")
-    Set<ProjectWeeklyReport> getProjectReports(int projectId);
+    @Select("SELECT * FROM project_reports WHERE project_id = #{projectId} ORDER BY start_date desc")
+    List<ProjectWeeklyReport> getProjectReports(int projectId);
 
     @Delete("DELETE FROM project_reports WHERE report_id = #{reportId} AND project_id = #{projectId}")
     boolean deleteProjectReport(int reportId, int projectId);

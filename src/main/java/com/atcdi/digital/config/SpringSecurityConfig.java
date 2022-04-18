@@ -50,6 +50,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public HttpSessionIdResolver sessionIdResolver(){
         return new HeaderHttpSessionIdResolver("Authorization");
     }
+
     @Bean
     public SessionRepository<MapSession> sessionRepository() {
         return new MapSessionRepository(new ConcurrentHashMap<>());
@@ -69,6 +70,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js",
+                        "/static/**",
                         "/favicon.ico",
                         "/v3/**",
                         "/swagger-resources/**",

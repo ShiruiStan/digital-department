@@ -2,9 +2,15 @@ server:
   port: 8080
 
 spring:
-  output:
-    ansi:
-      enabled: ALWAYS
+  servlet:
+    multipart:
+      max-file-size:
+        100MB
+      max-request-size:
+        1000MB
+#  output:
+#    ansi:
+#      enabled: ALWAYS
   mvc:
     throw-exception-if-no-handler-found: true
   resources:
@@ -25,3 +31,9 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
   type-handlers-package: com.atcdi.digital.handler
+
+atcdi:
+#  upload-path: F:\WorkSpace\Nginx\department\upload
+#  vue-path: http://localhost/department/upload
+  upload-path: D:\NginxHtml\department-upload
+  vue-path: http://220.178.80.61:8081/department-upload

@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -21,6 +22,8 @@ public class User implements UserDetails {
     String password;
     String nickname;
     String phone;
+    @ApiModelProperty("头像")
+    String avatar;
     @ApiModelProperty("账号角色： 均以ROLE_开头，后期做权限控制时使用")
     Set<Role> roles = new HashSet<>();
     @JsonIgnore

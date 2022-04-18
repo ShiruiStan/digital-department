@@ -1,19 +1,15 @@
 package com.atcdi.digital.controller;
 
-import com.atcdi.digital.dao.PermissionDao;
 import com.atcdi.digital.entity.StandardResponse;
-import com.atcdi.digital.entity.User;
-import com.atcdi.digital.service.PermissionService;
 import com.atcdi.digital.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.security.access.expression.SecurityExpressionRoot;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 
 @RestController
@@ -66,5 +62,9 @@ public class UserController {
         return StandardResponse.success(userService.getUserList());
     }
 
-
+    @PostMapping("/avatar")
+    public StandardResponse updateUserAvatar(@RequestBody MultipartFile avatar) throws IOException {
+        userService.setUserAvatar(avatar);
+        return StandardResponse.success();
+    }
 }

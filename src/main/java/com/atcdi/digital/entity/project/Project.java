@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -53,11 +54,11 @@ public class Project {
     @ApiModelProperty("重点技术要求")
     String keyTechnology;
     @ApiModelProperty("项目成员")
-    Set<ProjectMember> projectMembers;
+    List<ProjectMember> projectMembers;
     @ApiModelProperty("外协单位")
-    Set<ProjectAssist> projectAssists;
+    List<ProjectAssist> projectAssists;
     @ApiModelProperty("项目周报")
-    Set<ProjectWeeklyReport> projectReports;
+    List<ProjectWeeklyReport> projectReports;
 
     public enum ProjectStatus{
         LAUNCH,

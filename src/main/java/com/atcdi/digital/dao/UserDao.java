@@ -3,6 +3,7 @@ package com.atcdi.digital.dao;
 import com.atcdi.digital.entity.auth.Role;
 import com.atcdi.digital.entity.User;
 import org.apache.ibatis.annotations.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -48,5 +49,7 @@ public interface UserDao {
     @Select("SELECT * FROM users WHERE enabled=1")
     Set<User> getAllUsers();
 
+    @Update("UPDATE users SET avatar = #{avatar} WHERE user_id= #{userId}")
+    boolean setUserAvatar(int userId, String avatar);
 
 }

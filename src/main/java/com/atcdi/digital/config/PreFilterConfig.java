@@ -33,7 +33,7 @@ public class PreFilterConfig implements Filter {
         String origin = req.getHeader("Origin");
         if (origin != null) res.setHeader("Access-Control-Allow-Origin", origin);
 //        String header = req.getHeader("Access-Control-Request-Headers");
-        String header = "Accept, Origin, Content-Type, Authorization, Content-Length";
+        String header = "Accept, Origin, Content-Type, Authorization, Content-Length, X-Requested-With, IgnoreCancelToken";
         res.setHeader("Access-Control-Allow-Headers", header);
         String methods = "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE";
         res.setHeader("Access-Control-Allow-Methods", methods);
