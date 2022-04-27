@@ -41,10 +41,8 @@ public class UserService implements UserDetailsService {
     PermissionService permissionService;
     @Resource
     ObjectMapper mapper;
-    @Value("${atcdi.upload-path}")
-    String uploadPath;
-    @Value("${atcdi.vue-path}")
-    String vuePath;
+    @Value("${atcdi.upload.static}")
+    String staticFilePath;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -176,18 +174,17 @@ public class UserService implements UserDetailsService {
             if (null != user.getAvatar()){
                 String[] pathList = user.getAvatar().split("/");
                 String fileName = pathList[pathList.length - 1];
-                File oldFile = new File(uploadPath + "/avatar/" + fileName);
+                File oldFile = new File(staticFilePath + "/avatar/" + fileName);
                 if (oldFile.exists() && !oldFile.delete()){
                     throw new StandardException(500, "旧头像删除失败");
                 }
-                String uuid = UUID.randomUUID().toString().replaceAll("-","");
-                File file = new File(uploadPath + "/avatar/"  + uuid + ".png");
-                avatar.transferTo(file);
-                String path = vuePath + "/avatar/" + uuid + ".png";
-                userDao.setUserAvatar(user.getUserId(), path);
-                user.setAvatar(path);
-                sessionHandler.registryUser(user);
             }
+            String uuid = UUID.randomUUID().toString().replaceAll("-","");
+            File file = new File(staticFilePath + "/avatar/"  + uuid + ".png");
+            avatar.transferTo(file);
+            userDao.setUserAvatar(user.getUserId(), uuid + ".png");
+            user.setAvatar(uuid + ".png");
+            sessionHandler.registryUser(user);
         }
     }
 

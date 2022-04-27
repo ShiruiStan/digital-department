@@ -47,9 +47,12 @@ public interface UserDao {
     String getUserNickNameById(int userId);
 
     @Select("SELECT * FROM users WHERE enabled=1")
+    @ResultMap("userMap")
     Set<User> getAllUsers();
 
     @Update("UPDATE users SET avatar = #{avatar} WHERE user_id= #{userId}")
     boolean setUserAvatar(int userId, String avatar);
 
 }
+
+

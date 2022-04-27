@@ -1,7 +1,9 @@
 package com.atcdi.digital.service;
 
+import com.atcdi.digital.dao.FileDao;
 import com.atcdi.digital.dao.ProjectDao;
 import com.atcdi.digital.entity.StandardException;
+import com.atcdi.digital.entity.UploadFile;
 import com.atcdi.digital.entity.User;
 import com.atcdi.digital.entity.daliy.WorkItem;
 import com.atcdi.digital.entity.project.Project;
@@ -11,9 +13,13 @@ import com.atcdi.digital.handler.SessionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,11 +28,15 @@ public class ProjectService {
     @Resource
     ProjectDao projectDao;
     @Resource
+    FileDao fileDao;
+    @Resource
     UserService userService;
     @Resource
     SessionHandler sessionHandler;
     @Resource
     ObjectMapper mapper;
+    @Value("${atcdi.upload.document}")
+    String documentFilePath;
 
     public JsonNode getProjectById(int projectId) {
         Project project = projectDao.getProjectById(projectId);
@@ -51,7 +61,7 @@ public class ProjectService {
         return briefProjectList(projectDao.getUserProjects(userId));
     }
 
-    public List<JsonNode> getUserManageProjects(){
+    public List<JsonNode> getUserManageProjects() {
         Set<Project> projects = projectDao.getAllProjects();
         return briefProjectList(projects.stream().filter(this::canManageProject).collect(Collectors.toSet()));
     }
@@ -60,50 +70,55 @@ public class ProjectService {
         return projects.stream().filter(Objects::nonNull).map(this::projectBriefInfo).collect(Collectors.toList());
     }
 
-    private JsonNode projectBriefInfo(Project project){
+    private JsonNode projectBriefInfo(Project project) {
         ObjectNode briefInfo = mapper.createObjectNode();
-        briefInfo.put("projectId" , project.getProjectId());
-        briefInfo.put("projectName" , project.getProjectName());
+        briefInfo.put("projectId", project.getProjectId());
+        briefInfo.put("projectName", project.getProjectName());
         briefInfo.set("projectStatus", mapper.valueToTree(project.getProjectStatus()));
-        if (project.getManagerName() != null) briefInfo.put("managerName" , project.getManagerName());
-        if (project.getProjectClass() != null) briefInfo.set("projectClass" , mapper.valueToTree(project.getProjectClass()));
-        if (project.getProjectOrigin() != null) briefInfo.set("projectOrigin" , mapper.valueToTree(project.getProjectOrigin()));
-        if (project.getProjectStage() != null) briefInfo.set("projectStage" , mapper.valueToTree(project.getProjectStage()));
-        if (project.getDescription() != null) briefInfo.put("description" , project.getDescription());
-        if (project.getPlanStartDate() != null) briefInfo.set("planStartDate" , mapper.valueToTree(project.getPlanStartDate()));
-        if (project.getPlanEndDate() != null) briefInfo.set("planEndDate" , mapper.valueToTree(project.getPlanEndDate()));
+        if (project.getManagerName() != null) briefInfo.put("managerName", project.getManagerName());
+        if (project.getProjectClass() != null)
+            briefInfo.set("projectClass", mapper.valueToTree(project.getProjectClass()));
+        if (project.getProjectOrigin() != null)
+            briefInfo.set("projectOrigin", mapper.valueToTree(project.getProjectOrigin()));
+        if (project.getProjectStage() != null)
+            briefInfo.set("projectStage", mapper.valueToTree(project.getProjectStage()));
+        if (project.getDescription() != null) briefInfo.put("description", project.getDescription());
+        if (project.getPlanStartDate() != null)
+            briefInfo.set("planStartDate", mapper.valueToTree(project.getPlanStartDate()));
+        if (project.getPlanEndDate() != null)
+            briefInfo.set("planEndDate", mapper.valueToTree(project.getPlanEndDate()));
         return briefInfo;
     }
 
-    public Set<JsonNode> getAllProjectNameList(){
+    public Set<JsonNode> getAllProjectNameList() {
         Set<WorkItem> items = projectDao.getWorkItems();
         projectDao.getProjectNameList().forEach(project -> {
             WorkItem item = new WorkItem();
             item.setItemName(project.getProjectName());
             String c = "";
-            if (project.getProjectStatus() == Project.ProjectStatus.ONGOING){
+            if (project.getProjectStatus() == Project.ProjectStatus.ONGOING) {
                 c += "1-进行中的项目-";
-            }else if (project.getProjectStatus() == Project.ProjectStatus.FINISHED){
+            } else if (project.getProjectStatus() == Project.ProjectStatus.FINISHED) {
                 c += "1-完成的项目-";
             }
-            if (project.getProjectClass() == Project.ProjectClass.PRODUCE_PROJECT){
+            if (project.getProjectClass() == Project.ProjectClass.PRODUCE_PROJECT) {
                 c += "生产项目";
-            }else if(project.getProjectClass() == Project.ProjectClass.RESEARCH_PROJECT){
+            } else if (project.getProjectClass() == Project.ProjectClass.RESEARCH_PROJECT) {
                 c += "科研项目";
-            }else{
+            } else {
                 c += "其他项目";
             }
             item.setItemClass(c);
             items.add(item);
         });
         Set<JsonNode> res = new HashSet<>();
-        items.stream().collect(Collectors.groupingBy(WorkItem::getItemClass)).forEach((workClass, workItem)->{
+        items.stream().collect(Collectors.groupingBy(WorkItem::getItemClass)).forEach((workClass, workItem) -> {
             ObjectNode node = mapper.createObjectNode();
             node.put("value", workClass);
             node.put("label", workClass);
             node.put("selectable", false);
             Set<JsonNode> children = new HashSet<>();
-            workItem.forEach(item->{
+            workItem.forEach(item -> {
                 ObjectNode child = mapper.createObjectNode();
                 child.put("value", item.getItemName());
                 child.put("label", item.getItemName());
@@ -115,24 +130,24 @@ public class ProjectService {
         return res;
     }
 
-    public int createAndUpdateProject(Project project){
+    public int createAndUpdateProject(Project project) {
         User user = userService.getCurrentUser();
         project.setManagerId(user.getUserId());
-        if (project.getProjectId() == 0){
+        if (project.getProjectId() == 0) {
             project.setProjectStatus(Project.ProjectStatus.LAUNCH);
             project.setManagerName(user.getNickname());
-            if (!projectDao.createProject(project)){
+            if (!projectDao.createProject(project)) {
                 throw new StandardException(500, "创建项目失败");
             }
         }
         Project target = projectDao.getProjectById(project.getProjectId());
-        if(canManageProject(target)){
+        if (canManageProject(target)) {
             projectDao.updateProjectInfo(project);
-            project.getProjectMembers().forEach(member->{
+            project.getProjectMembers().forEach(member -> {
                 member.setProjectId(project.getProjectId());
                 if (member.getMemberId() == 0) {
                     projectDao.insertProjectMember(member);
-                }else {
+                } else {
                     projectDao.updateProjectMembers(member);
                 }
             });
@@ -140,7 +155,7 @@ public class ProjectService {
                 assist.setProjectId(project.getProjectId());
                 if (assist.getAssistId() == 0) {
                     projectDao.insertProjectAssist(assist);
-                }else {
+                } else {
                     projectDao.updateProjectAssists(assist);
                 }
             });
@@ -148,42 +163,75 @@ public class ProjectService {
                 report.setProjectId(project.getProjectId());
                 if (report.getReportId() == 0) {
                     projectDao.insertProjectReport(report);
-                }else {
+                } else {
                     projectDao.updateProjectReport(report);
                 }
             });
-        }else{
-            throw new StandardException(403, "您没有权限操作该项目："+ project.getProjectName());
+        } else {
+            throw new StandardException(403, "您没有权限操作该项目：" + project.getProjectName());
         }
         return project.getProjectId();
     }
 
 
-    public void approveProjectLaunch(int projectId){
+    public void approveProjectLaunch(int projectId) {
         projectDao.approveProjectLaunch(projectId);
     }
 
-    public void insertWeeklyReport(ProjectWeeklyReport report){
+    public void insertWeeklyReport(ProjectWeeklyReport report) {
         if (!projectDao.insertProjectReport(report)) throw new StandardException(500, "周报填写错误");
     }
 
-    public  void deleteProjectMember(int projectId, int memberId){
+    public void deleteProjectMember(int projectId, int memberId) {
         Project project = projectDao.getProjectById(projectId);
-        if (canManageProject(project) && !projectDao.deleteProjectMember(memberId, projectId)) throw new StandardException(500, "删除失败");
-    }
-    public  void deleteProjectAssist(int projectId, int assistId){
-        Project project = projectDao.getProjectById(projectId);
-        if (canManageProject(project) && !projectDao.deleteProjectAssist(assistId, projectId)) throw new StandardException(500, "删除失败");
-    }
-    public  void deleteProjectReport(int projectId, int reportId){
-        Project project = projectDao.getProjectById(projectId);
-        if (canManageProject(project) && !projectDao.deleteProjectReport(reportId, projectId)) throw new StandardException(500, "删除失败");
+        if (canManageProject(project) && !projectDao.deleteProjectMember(memberId, projectId))
+            throw new StandardException(500, "删除失败");
     }
 
-    public boolean canManageProject(Project project){
+    public void deleteProjectAssist(int projectId, int assistId) {
+        Project project = projectDao.getProjectById(projectId);
+        if (canManageProject(project) && !projectDao.deleteProjectAssist(assistId, projectId))
+            throw new StandardException(500, "删除失败");
+    }
+
+    public void deleteProjectReport(int projectId, int reportId) {
+        Project project = projectDao.getProjectById(projectId);
+        if (canManageProject(project) && !projectDao.deleteProjectReport(reportId, projectId))
+            throw new StandardException(500, "删除失败");
+    }
+
+    public boolean canManageProject(Project project) {
         if (sessionHandler.hasRole("ROLE_ADMIN")) return true;
-        else if (sessionHandler.hasRole("ROLE_MASTER") && Project.ProjectStatus.LAUNCH.equals(project.getProjectStatus())) return true;
-        else return project.getManagerId() == sessionHandler.getCurrentUser().getUserId() && !Project.ProjectStatus.FINISHED.equals(project.getProjectStatus());
+        else if (sessionHandler.hasRole("ROLE_MASTER") && Project.ProjectStatus.LAUNCH.equals(project.getProjectStatus()))
+            return true;
+        else
+            return project.getManagerId() == sessionHandler.getCurrentUser().getUserId() && !Project.ProjectStatus.FINISHED.equals(project.getProjectStatus());
+    }
+
+    public int addProjectFiles(int projectId, MultipartFile upload, String path) throws IOException {
+        if (null == upload) {
+            throw new StandardException(500, "文件为空");
+        } else {
+            UploadFile file = new UploadFile();
+            file.setFileName(upload.getOriginalFilename());
+            String projectName = projectDao.getProjectNameById(projectId);
+            String filePath = StringUtils.hasLength(path) ? "/" + projectName + "/" + path + "/" : "/" + projectName + "/";
+            file.setFilePath(filePath);
+            if (file.needSaveInDatabase(documentFilePath, upload)) {
+                fileDao.insertNewFile(file);
+                fileDao.addFileToProject(projectId, file.getFileId());
+            }
+            return file.getFileId();
+        }
+    }
+
+    public void deleteProjectFile(int fileId, int projectId){
+        if (canManageProject(projectDao.getProjectById(projectId))){
+            fileDao.deleteFileFromProject(projectId, fileId);
+            fileDao.deleteFileById(fileId);
+        }else{
+            throw new StandardException(403, "您没有权限删除该项目文件");
+        }
     }
 
 }

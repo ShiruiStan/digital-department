@@ -1,0 +1,14 @@
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+
+logging:
+  level:
+    com.atcdi: debug
+
+
+atcdi:
+  upload :
+    static : F:\WorkSpace\Nginx\department\static
+    document: F:\WorkSpace\Nginx\department\document

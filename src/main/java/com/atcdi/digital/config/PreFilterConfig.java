@@ -1,6 +1,7 @@
 package com.atcdi.digital.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 
 @Component
 @Order(-999)
+@Slf4j
 public class PreFilterConfig implements Filter {
     @Resource
     HandlerExceptionResolver handlerExceptionResolver;
@@ -28,8 +30,7 @@ public class PreFilterConfig implements Filter {
             throws RuntimeException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        System.out.println(req.getMethod() + " " + req.getRequestURI());
-
+        log.debug(req.getMethod() + " " + req.getRequestURI());
         String origin = req.getHeader("Origin");
         if (origin != null) res.setHeader("Access-Control-Allow-Origin", origin);
 //        String header = req.getHeader("Access-Control-Request-Headers");

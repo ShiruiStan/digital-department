@@ -26,5 +26,6 @@ public interface DairyDao {
     boolean deleteDairy(int dairyId);
 
     @Insert("INSERT INTO dairy (user_id,work_item,date,work_desc,spend_time) VALUES(#{userId},#{workItem},#{date},#{workDesc},#{spendTime})")
+    @Options(useGeneratedKeys = true, keyProperty = "dairyId", keyColumn = "dairy_id")
     boolean insertDairy(Dairy dairy);
 }

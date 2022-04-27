@@ -1,5 +1,6 @@
 package com.atcdi.digital.entity.project;
 
+import com.atcdi.digital.entity.UploadFile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -59,10 +60,13 @@ public class Project {
     List<ProjectAssist> projectAssists;
     @ApiModelProperty("项目周报")
     List<ProjectWeeklyReport> projectReports;
+    @ApiModelProperty("项目文件")
+    List<UploadFile> projectFiles;
 
     public enum ProjectStatus{
         LAUNCH,
         ONGOING,
+        FINISHING,
         FINISHED,
     }
 

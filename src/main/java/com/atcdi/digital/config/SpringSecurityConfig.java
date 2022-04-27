@@ -75,7 +75,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v3/**",
                         "/swagger-resources/**",
                         "/swagger-ui/**",
-                        "/test/**")
+                        "/test/**",
+                        "/files/download/**")
                 .antMatchers(HttpMethod.OPTIONS, "/**");
     }
 

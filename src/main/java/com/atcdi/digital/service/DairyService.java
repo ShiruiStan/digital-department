@@ -67,11 +67,13 @@ public class DairyService {
         } else return true;
     }
 
-    public boolean createDairy(Dairy dairy){
+    public int createDairy(Dairy dairy){
         dairy.setUserId(userService.getCurrentUser().getUserId());
-        if (!dairyDao.insertDairy(dairy)){
-            throw new StandardException(500, "日志新增错误："  + dairy);
-        }else return true;
+        if (dairyDao.insertDairy(dairy)){
+            return dairy.getDairyId();
+        }else{
+            throw new StandardException(500, "日志创建错误，日志ID：" + dairy.getDairyId());
+        }
     }
 
     boolean checkUser(int checkId){

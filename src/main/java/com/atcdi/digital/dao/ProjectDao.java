@@ -1,5 +1,6 @@
 package com.atcdi.digital.dao;
 
+import com.atcdi.digital.entity.UploadFile;
 import com.atcdi.digital.entity.daliy.WorkItem;
 import com.atcdi.digital.entity.project.Project;
 import com.atcdi.digital.entity.project.ProjectAssist;
@@ -19,6 +20,7 @@ public interface ProjectDao {
             @Result(property = "projectMembers", column = "project_id", many = @Many(select = "getProjectMembers")),
             @Result(property = "projectAssists", column = "project_id", many = @Many(select = "getProjectAssists")),
             @Result(property = "projectReports", column = "project_id", many = @Many(select = "getProjectReports")),
+            @Result(property = "projectFiles", column = "project_id", many = @Many(select = "getProjectFiles")),
     })
     Project getProjectById(int projectId);
 
@@ -40,6 +42,9 @@ public interface ProjectDao {
 
     @Delete("DELETE FROM project_reports WHERE report_id = #{reportId} AND project_id = #{projectId}")
     boolean deleteProjectReport(int reportId, int projectId);
+
+    @Select("SELECT f.* FROM files f LEFT JOIN project_file pf ON f.file_id = pf.file_id WHERE pf.project_id = #{projectId}")
+    List<UploadFile> getProjectFiles(int projectId);
 
     @Select("SELECT * FROM projects")
     @ResultMap("projectMap")
@@ -113,5 +118,6 @@ public interface ProjectDao {
 
     @Update("UPDATE project_reports SET project_id=#{projectId}, end_date=#{endDate}, start_date=#{startDate}, report=#{report} WHERE report_id = #{reportId}")
     boolean updateProjectReport(ProjectWeeklyReport report);
+
 
 }

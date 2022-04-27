@@ -44,11 +44,7 @@ public class DairyController {
 
     @PostMapping("/create")
     public StandardResponse createDairy(@NonNull Dairy record){
-        if (dairyService.createDairy(record)){
-            return StandardResponse.success();
-        }else{
-            return StandardResponse.error();
-        }
+        return StandardResponse.success(dairyService.createDairy(record));
     }
 
     @GetMapping("/user_tree")

@@ -1,8 +1,11 @@
 package com.atcdi.digital.handler;
 
 
+import com.atcdi.digital.entity.StandardException;
 import com.atcdi.digital.entity.auth.Role;
 import com.atcdi.digital.entity.User;
+import org.springframework.session.MapSession;
+import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
@@ -16,6 +19,8 @@ public class SessionHandler {
 
     @Resource
     HttpSession session;
+    @Resource
+    SessionRepository<MapSession> sessionRepository;
 
     AntPathMatcher antPathMatcher = new AntPathMatcher();
     public HashMap<String, Set<String>> permissionMap = new HashMap<>();
@@ -65,8 +70,24 @@ public class SessionHandler {
         return roles != null && roles.contains(roleName);
     }
 
-
     public boolean leaderOf(User other){
         return getCurrentUser().getGroup().equals(other.getGroup()) && hasRole("ROLE_LEADER");
+    }
+
+    public boolean checkUserDownload(String token){
+        MapSession loginSession = sessionRepository.findById(token);
+        if (loginSession == null){
+            throw new StandardException(401, "token已失效，请重新登录");
+        }else{
+            User user = loginSession.getAttribute("user");
+            if (user == null){
+                throw new StandardException(403, "token已失效，请重新登录");
+            }else{
+//                registryUser(user);
+                // TODO 确定下载权限
+                sessionRepository.deleteById(session.getId());
+                return true;
+            }
+        }
     }
 }
